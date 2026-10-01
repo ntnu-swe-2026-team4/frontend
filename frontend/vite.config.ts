@@ -9,7 +9,7 @@ export default defineConfig({
   build: { target: "es2022" },
   server: {
     port: 5173,
-    // 後端（Rust / Axum）預設在 8000，開發時由 Vite 代理，前端不用處理 CORS
+    // 後端（Bun + Hono）預設在 8000，開發時由 Vite 代理，前端不用處理 CORS
     proxy: { "/api": { target: "http://localhost:8000", changeOrigin: true } },
   },
 });
