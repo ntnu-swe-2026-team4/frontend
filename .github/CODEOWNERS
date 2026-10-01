@@ -1,7 +1,7 @@
 # 預設（根層共用：CI、compose、workspace、docs）→ 組長 + PM
 * @ccohongrui @G36maid
 
-# 各目錄由對應 team review（後面的規則覆蓋前面的預設）
-/frontend/       @ntnu-swe-2026-team4/frontend
-/server/         @ntnu-swe-2026-team4/backend
-/llm/            @ntnu-swe-2026-team4/llm
+# 各目錄：team 全員 review + 組長必定入列
+/frontend/       @ntnu-swe-2026-team4/frontend @ccohongrui
+/server/         @ntnu-swe-2026-team4/backend  @minstrike520
+/llm/            @ntnu-swe-2026-team4/llm      @shiraga1094 @alifestone
