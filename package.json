@@ -1,0 +1,10 @@
+{
+  "name": "socrates-classroom",
+  "private": true,
+  "workspaces": ["frontend"],
+  "scripts": {
+    "dev": "cd frontend && bun run dev",
+    "build": "cd frontend && bun run build",
+    "typecheck": "cd frontend && bun run typecheck"
+  }
+}
