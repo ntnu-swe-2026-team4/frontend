@@ -6,7 +6,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { inject } from "vitest";
 import { seedDemo } from "../src/seed";
 import { run } from "../src/db/d1";
-import { assistantText, call, cookieOf, frames, latestView } from "./helpers";
+import { assistantText, call, cookieOf, frames, latestView, enableTeacher } from "./helpers";
 
 let teacherCookie: string;
 let classroomCode: string;
@@ -47,7 +47,7 @@ beforeAll(async () => {
     body: JSON.stringify({ email: "demo@socrates.tw", password: "demo-demo" }),
   });
   expect(login.status).toBe(200);
-  teacherCookie = cookieOf(login);
+  teacherCookie = await enableTeacher(cookieOf(login));
   const topics = (await (await call("/api/topics", { headers: { Cookie: teacherCookie } })).json()) as Array<{
     id: string;
   }>;

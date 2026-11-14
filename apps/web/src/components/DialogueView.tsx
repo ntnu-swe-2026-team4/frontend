@@ -178,6 +178,7 @@ export function DialogueView({
 
   const streaming = phase === "streaming";
   const busy = phase !== "idle";
+  const awaitingReply = phase === "thinking" || phase === "streaming";
   const status =
     voice.state === "listening"
       ? t("dlg_listening")
@@ -190,7 +191,7 @@ export function DialogueView({
             : "";
 
   function submitText() {
-    if (!text.trim() || busy || !viewReady) return;
+    if (!text.trim() || awaitingReply || !viewReady) return;
     if (submit(text)) setText("");
   }
 
@@ -249,7 +250,7 @@ export function DialogueView({
                       <button
                         type="button"
                         key={prompt}
-                        disabled={busy || !viewReady || Boolean(closedNotice)}
+                        disabled={awaitingReply || !viewReady || Boolean(closedNotice)}
                         onClick={() => void submit(prompt)}
                         className="cursor-pointer rounded-full border border-line-strong px-4 py-1.5 text-[13px] text-ink-soft transition-colors hover:border-ember hover:text-ink disabled:opacity-50"
                       >
@@ -344,7 +345,7 @@ export function DialogueView({
                   type="button"
                   aria-label={t("dlg_hold_to_talk")}
                   title={t("dlg_hold_to_talk")}
-                  disabled={busy || !viewReady}
+                  disabled={awaitingReply || !viewReady}
                   onPointerDown={(event) => {
                     event.preventDefault();
                     void voice.start();
@@ -386,9 +387,9 @@ export function DialogueView({
                       submitText();
                     }
                   }}
-                  className="block max-h-[160px] min-h-10 min-w-0 flex-1 resize-none rounded-[20px] border border-line-strong bg-paper-deep px-4 py-2 text-sm leading-6 text-ink outline-none placeholder:text-ink-faint focus:border-ember"
+                  className="block max-h-[160px] min-h-10 min-w-0 flex-1 resize-none rounded-[20px] border border-line-strong bg-paper-deep px-4 py-2 text-sm leading-6 text-ink outline-none placeholder:text-ink-faint focus:border-ink"
                 />
-                {busy ? (
+                {awaitingReply ? (
                   <button
                     type="button"
                     onClick={interrupt}
@@ -403,7 +404,7 @@ export function DialogueView({
                     onClick={submitText}
                     disabled={!text.trim() || !viewReady}
                     aria-label={t("common_send")}
-                    className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-ember text-on-ember transition hover:brightness-110 disabled:opacity-50"
+                    className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-ink text-paper transition-colors hover:bg-ember hover:text-on-ember disabled:opacity-50"
                   >
                     <Send className="size-4" />
                   </button>
