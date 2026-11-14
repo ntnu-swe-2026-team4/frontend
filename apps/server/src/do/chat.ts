@@ -37,6 +37,8 @@ class ActivityFinishedError extends Error {
   }
 }
 
+const LAST_ACTIVE_KEY = "lastActiveAt";
+
 export class Chat extends DurableObject<Env> {
   readonly registry = createRegistry();
   readonly models = buildModels(this.env, { teacherOf: () => this.teacherId() });
@@ -125,6 +127,7 @@ export class Chat extends DurableObject<Env> {
         { id: threadId },
       );
       if (activity?.finished_at) throw new ActivityFinishedError();
+      await this.ctx.storage.put(LAST_ACTIVE_KEY, new Date().toISOString());
     }
     const router = getRouter(this.env);
     const canServe = (entry: { provider: string; model: string }): boolean =>
@@ -181,6 +184,22 @@ export class Chat extends DurableObject<Env> {
       return true;
     });
     return { messages, violations: deduped };
+  }
+
+  async live(): Promise<{
+    rounds: number;
+    lastUtterance: string;
+    lastActiveAt: string | null;
+    flags: Array<{ turn: number; type: string; excerpt: string }>;
+  }> {
+    const { messages, violations } = await this.transcript();
+    const said = messages.filter((message) => message.role === "user");
+    return {
+      rounds: said.length,
+      lastUtterance: said.at(-1)?.text ?? "",
+      lastActiveAt: (await this.ctx.storage.get<string>(LAST_ACTIVE_KEY)) ?? null,
+      flags: violations,
+    };
   }
 
   private get studentId(): string {
